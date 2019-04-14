@@ -87,7 +87,8 @@ export default {
       form: {
         UserName: '',
         Active: '1',
-        Email: ''
+        Email: '',
+        id: ''
       },
     }
   },
@@ -127,17 +128,7 @@ export default {
     },
     // 获取 easy-mock 的模拟数据
     fetchData () {
-
-      this.$axios({
-        method: 'post',
-        url: '/admin/user/vueList',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ' + '112233'
-        },
-        params: {
-        }
-      }).then((res) => {
+      this.$httpPost('/admin/user/vueList', {}, (res) => {
         console.error("userList:", res.data)
         if (res.data.state == -1) {
           localStorage.removeItem('ms_username')
@@ -146,7 +137,6 @@ export default {
         }
         this.tableData = res.data.list
       })
-
     },
     search () {
       this.is_search = true
@@ -163,7 +153,8 @@ export default {
       this.form = {
         UserName: item.UserName,
         Email: item.Email,
-        Active: item.Active === true ? '1' : '2'
+        Active: item.Active === true ? '1' : '2',
+        Id: item.Id
       }
       this.editVisible = true
     },
@@ -186,10 +177,14 @@ export default {
     },
     // 保存编辑
     saveEdit () {
-      //this.$set(this.tableData, this.idx, this.form)
-      //this.editVisible = false
-      //this.$message.success(`修改第 ${this.idx + 1} 行成功`)
-      console.error("this.form:", this.form)
+      var params = { id: this.form.Id, email: this.form.Email, active: this.form.Active }
+      this.$httpPost('/admin/user/vueEdit', params, (res) => {
+        console.error("userList:", res.data)
+        this.$set(this.tableData, this.idx, this.form)
+        this.editVisible = false
+        this.$message.success(`修改第 ${this.idx + 1} 行成功`)
+      })
+      console.error(this.form.UserName, this.form.Email, this.form.Active, this.form.Id)
     },
     // 确定删除
     deleteRow () {

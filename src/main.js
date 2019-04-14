@@ -12,6 +12,27 @@ Vue.prototype.$axios = axios
 Vue.prototype.$axios.defaults.baseURL = 'http://localhost:8080'
 Vue.config.productionTip = false
 
+var CHttpHeader = {
+  'Content-Type': 'application/x-www-form-urlencoded',
+  'Authorization': 'Bearer ' + '112233'
+}
+/**Post请求服务器 */
+Vue.prototype.$httpPost = function (url, params, callBack) {
+  this.$axios({
+    method: 'post',
+    url: url,
+    headers: CHttpHeader,
+    params: params,
+  }).then((res) => {
+    console.error(res.data)
+    callBack(res)
+  }).catch(function (error) {
+    console.error(error);
+  });
+}
+
+
+
 // 使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
   const role = localStorage.getItem('ms_username')
